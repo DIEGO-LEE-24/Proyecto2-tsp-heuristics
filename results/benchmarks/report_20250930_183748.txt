@@ -1,0 +1,33 @@
+============================================================
+BENCHMARK REPORT - TSP ALGORITHMS
+============================================================
+Generated: 2025-09-30 18:37:48
+
+ALGORITHM PERFORMANCE SUMMARY
+----------------------------------------
+
+GREEDY:
+  Avg Time: 3.822s
+  Avg Cost: 600.19
+  Time Std Dev: 6.037s
+  Tested on: [20, 50, 100] cities
+
+GENETIC:
+  Avg Time: 10.254s
+  Avg Cost: 883.25
+  Time Std Dev: 8.455s
+  Tested on: [20, 50, 100] cities
+
+SIMULATED_ANNEALING:
+  Avg Time: 0.098s
+  Avg Cost: 1088.78
+  Time Std Dev: 0.050s
+  Tested on: [20, 50, 100] cities
+
+========================================
+BEST PERFORMERS
+----------------------------------------
+Fastest: greedy (0.026s)
+Best Quality: greedy (cost: 386.63)
+Best Balance: greedy
+============================================================

@@ -1,0 +1,231 @@
+# Makefile for TSP Heuristics Project
+
+.PHONY: help install clean test lint format run docs notebook benchmark
+
+# Variables
+PYTHON := python3
+PIP := pip3
+PYTEST := pytest
+BLACK := black
+FLAKE8 := flake8
+PYLINT := pylint
+
+# Colors for output
+RED := \033[0;31m
+GREEN := \033[0;32m
+YELLOW := \033[0;33m
+NC := \033[0m # No Color
+
+# Default target
+help:
+	@echo "$(GREEN)TSP Heuristics - Available commands:$(NC)"
+	@echo "  $(YELLOW)make install$(NC)      Install dependencies"
+	@echo "  $(YELLOW)make install-dev$(NC)  Install with development dependencies"
+	@echo "  $(YELLOW)make clean$(NC)        Clean temporary files"
+	@echo "  $(YELLOW)make test$(NC)         Run tests"
+	@echo "  $(YELLOW)make coverage$(NC)     Run tests with coverage"
+	@echo "  $(YELLOW)make lint$(NC)         Run linters"
+	@echo "  $(YELLOW)make format$(NC)       Format code with black"
+	@echo "  $(YELLOW)make run$(NC)          Run main program"
+	@echo "  $(YELLOW)make docs$(NC)         Generate documentation"
+	@echo "  $(YELLOW)make notebook$(NC)     Start Jupyter notebook"
+	@echo "  $(YELLOW)make benchmark$(NC)    Run benchmarks"
+	@echo "  $(YELLOW)make check$(NC)        Check installation"
+
+# Installation
+install:
+	@echo "$(GREEN)Installing dependencies...$(NC)"
+	$(PIP) install -r requirements.txt
+	$(PIP) install -e .
+	@echo "$(GREEN)Installation complete!$(NC)"
+
+install-dev:
+	@echo "$(GREEN)Installing with development dependencies...$(NC)"
+	$(PIP) install -r requirements.txt
+	$(PIP) install -e .[dev,docs,notebook]
+	@echo "$(GREEN)Development installation complete!$(NC)"
+
+# Cleaning
+clean:
+	@echo "$(YELLOW)Cleaning temporary files...$(NC)"
+	find . -type f -name "*.pyc" -delete
+	find . -type d -name "__pycache__" -delete
+	find . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null || true
+	find . -type d -name ".mypy_cache" -exec rm -rf {} + 2>/dev/null || true
+	find . -type d -name "*.egg-info" -exec rm -rf {} + 2>/dev/null || true
+	rm -rf build/ dist/ htmlcov/ .coverage
+	rm -f results/*.json results/*.png
+	@echo "$(GREEN)Cleaned!$(NC)"
+
+# Testing
+test:
+	@echo "$(GREEN)Running tests...$(NC)"
+	$(PYTEST) tests/ -v
+
+coverage:
+	@echo "$(GREEN)Running tests with coverage...$(NC)"
+	$(PYTEST) tests/ --cov=algorithms --cov=utils --cov-report=html --cov-report=term
+
+test-greedy:
+	$(PYTEST) tests/test_greedy.py -v
+
+test-genetic:
+	$(PYTEST) tests/test_genetic.py -v
+
+test-sa:
+	$(PYTEST) tests/test_sa.py -v
+
+# Code quality
+lint:
+	@echo "$(YELLOW)Running linters...$(NC)"
+	$(FLAKE8) algorithms/ utils/ main.py --max-line-length=100 --ignore=E203,W503
+	$(PYLINT) algorithms/ utils/ main.py --max-line-length=100
+
+format:
+	@echo "$(YELLOW)Formatting code...$(NC)"
+	$(BLACK) algorithms/ utils/ tests/ main.py --line-length=100
+
+mypy:
+	@echo "$(YELLOW)Type checking...$(NC)"
+	mypy algorithms/ utils/ main.py
+
+# Running
+run:
+	@echo "$(GREEN)Running main program...$(NC)"
+	$(PYTHON) main.py
+
+run-small:
+	@echo "$(GREEN)Running with 20 cities...$(NC)"
+	$(PYTHON) main.py --cities 20 --algorithms all --visualize
+
+run-medium:
+	@echo "$(GREEN)Running with 50 cities...$(NC)"
+	$(PYTHON) main.py --cities 50 --algorithms all --visualize
+
+run-large:
+	@echo "$(GREEN)Running with 100 cities...$(NC)"
+	$(PYTHON) main.py --cities 100 --algorithms all --save-results
+
+run-parallel:
+	@echo "$(GREEN)Running hybrid parallel algorithm...$(NC)"
+	$(PYTHON) main.py --cities 50 --algorithms hybrid --strategy parallel
+
+run-demo:
+	@echo "$(GREEN)Running demo (20, 50, 100 cities)...$(NC)"
+	$(PYTHON) main.py --cities 20 --algorithms all --visualize
+	$(PYTHON) main.py --cities 50 --algorithms all --visualize
+	$(PYTHON) main.py --cities 100 --algorithms all --save-results
+
+# Documentation
+docs:
+	@echo "$(GREEN)Generating HTML documentation...$(NC)"
+	cd docs && sphinx-build -b html source build
+
+docs-pdf:
+	@echo "$(GREEN)Generating PDF documentation...$(NC)"
+	cd docs && pdflatex informe.tex && pdflatex informe.tex
+	cd docs && pdflatex presentacion.tex && pdflatex presentacion.tex
+	@echo "$(GREEN)PDFs generated in docs/$(NC)"
+
+# Jupyter
+notebook:
+	@echo "$(GREEN)Starting Jupyter notebook...$(NC)"
+	jupyter notebook notebooks/
+
+jupyter-lab:
+	@echo "$(GREEN)Starting Jupyter Lab...$(NC)"
+	jupyter lab notebooks/
+
+# Benchmarking
+benchmark:
+	@echo "$(GREEN)Running benchmarks...$(NC)"
+	$(PYTHON) -m utils.benchmark --instances small,medium,large --iterations 10
+
+benchmark-quick:
+	@echo "$(GREEN)Running quick benchmark...$(NC)"
+	$(PYTHON) -m utils.benchmark --instances small --iterations 3
+
+profile:
+	@echo "$(GREEN)Profiling with 30 cities...$(NC)"
+	$(PYTHON) -m cProfile -o profile.prof main.py --cities 30
+	$(PYTHON) -m snakeviz profile.prof
+
+memory-profile:
+	@echo "$(GREEN)Memory profiling...$(NC)"
+	$(PYTHON) -m memory_profiler main.py --cities 20
+
+# Data generation
+generate-data:
+	@echo "$(GREEN)Generating benchmark datasets...$(NC)"
+	$(PYTHON) -c "from utils.data_generator import TSPDataGenerator; gen = TSPDataGenerator(); gen.generate_benchmark_set()"
+	@echo "$(GREEN)Datasets generated in data/$(NC)"
+
+# Docker support (optional)
+docker-build:
+	@echo "$(GREEN)Building Docker image...$(NC)"
+	docker build -t tsp-heuristics .
+
+docker-run:
+	@echo "$(GREEN)Running Docker container...$(NC)"
+	docker run -it --rm -v $(PWD)/results:/app/results tsp-heuristics
+
+# Git helpers
+git-stats:
+	@echo "$(GREEN)Project statistics:$(NC)"
+	@echo "Lines of code:"
+	@find . -name "*.py" -not -path "./venv/*" | xargs wc -l | tail -1
+	@echo "\nNumber of Python files:"
+	@find . -name "*.py" -not -path "./venv/*" | wc -l
+	@echo "\nGit commits:"
+	@git rev-list --all --count 2>/dev/null || echo "Not a git repository yet"
+
+git-push:
+	@echo "$(GREEN)Pushing to GitHub...$(NC)"
+	git add .
+	git commit -m "Update: $$(date +'%Y-%m-%d %H:%M:%S')"
+	git push origin main
+
+# Installation check
+check:
+	@echo "$(GREEN)Checking installation...$(NC)"
+	@echo "Python version:"
+	@$(PYTHON) --version
+	@echo "\nInstalled packages:"
+	@$(PIP) list | grep -E "numpy|matplotlib|scipy" || echo "Core packages not installed"
+	@echo "\nProject structure:"
+	@ls -la algorithms/ utils/ 2>/dev/null || echo "Project directories not found"
+	@echo "\nPython path:"
+	@$(PYTHON) -c "import sys; print('\n'.join(sys.path))"
+	@echo "$(GREEN)Check complete!$(NC)"
+
+# Quick setup
+setup: clean install generate-data
+	@echo "$(GREEN)Setup complete! Run 'make run-demo' to test.$(NC)"
+
+# Development setup
+dev-setup: clean install-dev generate-data
+	@echo "$(GREEN)Development setup complete!$(NC)"
+
+# Full test suite
+test-all: lint mypy test coverage
+	@echo "$(GREEN)All tests complete!$(NC)"
+
+# Create directories
+init-dirs:
+	@echo "$(YELLOW)Creating project directories...$(NC)"
+	mkdir -p algorithms utils tests data results docs notebooks
+	touch algorithms/__init__.py utils/__init__.py tests/__init__.py
+	@echo "$(GREEN)Directories created!$(NC)"
+
+# Help for beginners
+quick-start:
+	@echo "$(GREEN)Quick Start Guide:$(NC)"
+	@echo "1. Run: make setup"
+	@echo "2. Run: make run-small"
+	@echo "3. View results in results/ directory"
+	@echo "\nFor development:"
+	@echo "1. Run: make dev-setup"
+	@echo "2. Run: make test"
+	@echo "3. Run: make notebook"
+
+.DEFAULT_GOAL := help
