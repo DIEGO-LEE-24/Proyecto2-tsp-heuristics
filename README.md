@@ -4,6 +4,13 @@
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Active-success)](https://github.com/usuario/tsp-heuristics)
 
+## 🎥 Video Demostración
+
+[![Ver Video Demo](https://img.shields.io/badge/▶️-Ver_Video_Demo-red?style=for-the-badge&logo=youtube)](https://youtu.be/TwWuK-tHaSM)
+
+**→ [Ver demostración completa del proyecto en YouTube](https://youtu.be/TwWuK-tHaSM)**
+
+
 ## 📋 Descripción
 
 Implementación completa de algoritmos heurísticos para resolver el **Problema del Viajante de Comercio (TSP)**, desarrollado como proyecto de investigación para el curso de Estructuras de Datos y Algoritmos.
