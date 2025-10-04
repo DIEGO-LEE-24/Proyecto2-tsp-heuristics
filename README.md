@@ -300,7 +300,7 @@ Las contribuciones son bienvenidas. Por favor:
 - Carné: 2024801079
 - Curso: Estructuras de Datos y Algoritmos
 - Universidad: Instituto Tecnológico de Costa Rica
-- Email: lsang@estudiantec.cr
+- Email: s.lee.1@estudiantec.cr
 
 ## 📄 Licencia
 
