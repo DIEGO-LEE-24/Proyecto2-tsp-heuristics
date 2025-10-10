@@ -211,13 +211,6 @@ Opciones:
 | Capitales | 7 | 892.3 km | 658.1 km | 26.2% |
 | Ruta Pacífica | 5 | 456.2 km | 387.9 km | 15.0% |
 
-### Visualización de Resultados
-
-**Comparación de Algoritmos:**
-![Comparación de rutas](results/comparison_50cities.png)
-
-**Ruta Optimizada en Costa Rica:**
-![Ruta Costa Rica](results/costa_rica_tsp.png)
 
 ## 🧪 Pruebas
 
