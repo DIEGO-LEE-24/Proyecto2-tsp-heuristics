@@ -85,8 +85,9 @@ tsp-heuristics/
 │   └── costa_rica_tsp.png # 🆕 Mapas de rutas CR
 │
 ├── docs/                  # Documentación
-│   ├── informe.pdf       # Informe completo (LaTeX)
+│   ├── informe.pdf       # Informe completo
 │   └── presentacion.pdf  # Presentación (Beamer)
+│   └── hoja de resumen.pdf
 │
 ├── main.py               # Programa principal
 ├── costa_rica_demo.py    # 🆕 Demo con ciudades de CR
