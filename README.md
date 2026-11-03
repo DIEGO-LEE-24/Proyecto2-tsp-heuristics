@@ -238,10 +238,8 @@ Las contribuciones son bienvenidas. Por favor:
 ## 👤 Autor
 
 **Lee Sang-cheol**
-- Carné: 2024801079
 - Curso: Estructuras de Datos y Algoritmos
 - Universidad: Instituto Tecnológico de Costa Rica
-- Email: s.lee.1@estudiantec.cr
 
 ## 📄 Licencia
 
