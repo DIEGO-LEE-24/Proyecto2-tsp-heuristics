@@ -1,8 +1,14 @@
 # 🗺️ TSP Solver - Algoritmos Heurísticos para Optimización de Rutas
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Active-success)](https://github.com/usuario/tsp-heuristics)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.md)
+
+> **English summary.** Solo course project for *Data Structures and Algorithms* at Instituto Tecnológico de Costa Rica (Oct 2025). Python implementations of four TSP heuristics: nearest-neighbour greedy with 2-opt/3-opt, a genetic algorithm, simulated annealing, and a hybrid (greedy → GA → SA → local search).
+>
+> - **Benchmark** (`results/benchmarks/report_20251004_142803.txt`): random instances of 10, 15, 20, 25 and 30 cities, 5 iterations each. Average tour cost / time: hybrid 385.28 / 5.53 s, greedy 393.27 / 0.06 s, GA 400.26 / 4.75 s, SA 415.22 / 0.06 s.
+> - **Costa Rica demo** (`costa_rica_demo.py`): GPS coordinates of 26 cities with haversine distances; runs greedy, SA and (for ≤ 20 cities) GA on city subsets and plots the routes.
+> - **Tests:** `pytest tests/` runs 15 unit tests for the greedy solver (they pass; statement coverage of `algorithms/` is 25 %). GA, SA and hybrid have no unit tests.
+> - The rest of this README is the original Spanish documentation, corrected in Nov 2026 where it did not match the code (see *Notas de corrección* at the end).
 
 ## 🎥 Video Demostración
 
@@ -17,7 +23,7 @@ Implementación completa de algoritmos heurísticos para resolver el **Problema 
 
 ### 🌟 Características Destacadas
 
-- **Datos Reales de Costa Rica**: Incluye coordenadas GPS de 27 ciudades costarricenses
+- **Datos Reales de Costa Rica**: Incluye coordenadas GPS de 26 ciudades costarricenses
 - **4 Algoritmos Implementados**: Greedy, Genetic Algorithm, Simulated Annealing, Hybrid
 - **Visualización Interactiva**: Mapas y gráficos de rutas optimizadas
 - **Aplicación Práctica**: Casos de uso en logística nacional
@@ -31,7 +37,7 @@ Implementación completa de algoritmos heurísticos para resolver el **Problema 
 - ✅ Generación de reportes y estadísticas
 - ✅ Soporte para importar/exportar datos
 - ✅ Optimizaciones avanzadas (2-opt, 3-opt)
-- ✅ Paralelización para grandes instancias
+- ✅ Ejecución paralela opcional en el algoritmo híbrido (`ThreadPoolExecutor`)
 
 ## 🇨🇷 Caso Especial: Ciudades de Costa Rica
 
@@ -60,40 +66,18 @@ test_costa_rica_tsp('pacifico', 'sa')
 ## 📁 Estructura del Proyecto
 
 ```
-tsp-heuristics/
-│
-├── algorithms/              # Implementaciones de algoritmos
-│   ├── __init__.py
-│   ├── greedy.py           # Algoritmos voraces
-│   ├── genetic.py          # Algoritmo genético
-│   ├── simulated_annealing.py  # Recocido simulado
-│   └── hybrid.py           # Algoritmos híbridos
-│
-├── utils/                  # Utilidades
-│   ├── __init__.py
-│   ├── data_generator.py   # Generador de datos de prueba
-│   ├── visualizer.py       # Visualización de rutas
-│   ├── costa_rica_data.py  # 🆕 Datos GPS de Costa Rica
-│   └── benchmark.py        # Herramientas de benchmark
-│
-├── data/                   # Datasets
-│   ├── cities_*.json
-│   └── costa_rica.json    # 🆕 Coordenadas de CR
-│
-├── results/               # Resultados de experimentos
-│   ├── comparisons/
-│   └── costa_rica_tsp.png # 🆕 Mapas de rutas CR
-│
-├── docs/                  # Documentación
-│   ├── informe.pdf       # Informe completo
-│   └── presentacion.pdf  # Presentación (Beamer)
-│   └── hoja de resumen.pdf
-│
-├── main.py               # Programa principal
-├── costa_rica_demo.py    # 🆕 Demo con ciudades de CR
-├── requirements.txt      # Dependencias
-├── setup.py             # Configuración de instalación
-└── README.md            # Este archivo
+Proyecto2-tsp-heuristics/
+├── algorithms/          # greedy.py, genetic.py, simulated_annealing.py, hybrid.py
+├── utils/               # data_generator.py, visualizer.py, costa_rica_data.py, benchmark.py
+├── tests/test_greedy.py # 15 pruebas unitarias (solo Greedy)
+├── results/benchmarks/  # CSV/JSON/informes de benchmark (2025-09-30, 2025-10-04)
+├── docs/                # informe, presentación, hoja de resumen, figuras
+├── main.py              # demo: 20, 50 y 100 ciudades aleatorias
+├── costa_rica_demo.py   # demo con ciudades de Costa Rica
+├── benchmark.py
+├── Makefile.txt
+├── requirements.txt
+└── setup.py
 ```
 
 ## 🔧 Instalación
@@ -107,8 +91,8 @@ tsp-heuristics/
 
 1. **Clonar el repositorio**
 ```bash
-git clone https://github.com/usuario/tsp-heuristics.git
-cd tsp-heuristics
+git clone https://github.com/DIEGO-LEE-24/Proyecto2-tsp-heuristics.git
+cd Proyecto2-tsp-heuristics
 ```
 
 2. **Crear entorno virtual**
@@ -162,76 +146,40 @@ print(f"Distancia total: {cost:.2f}")
 ### Comparación de Algoritmos
 
 ```bash
-# Ejecutar comparación completa
-python main.py --cities 50 --algorithms all --visualize
-
-# Solo algoritmos específicos
-python main.py --cities 30 --algorithms greedy,ga,sa --save-results
+# main.py no recibe argumentos: compara los 4 algoritmos con 20, 50 y 100
+# ciudades aleatorias (seed=42) y pide Enter entre cada tamaño
+python main.py
 ```
 
 ### 🇨🇷 Demo con Ciudades de Costa Rica
 
 ```bash
-# Ejecutar demo completo de Costa Rica
+# Ejecuta los subconjuntos valle_central, principales y pacifico
+# y guarda el mapa en results/costa_rica_tsp.png
 python costa_rica_demo.py
-
-# Resultado: genera mapa optimizado de rutas en CR
-```
-
-### Parámetros de línea de comandos
-
-```bash
-python main.py [OPTIONS]
-
-Opciones:
-  --cities N        Número de ciudades (default: 30)
-  --algorithms A    Algoritmos a usar: all, greedy, ga, sa, hybrid
-  --seed S          Semilla para reproducibilidad (default: 42)
-  --visualize       Mostrar visualización de resultados
-  --save-results    Guardar resultados en archivo JSON
-  --verbose         Modo verbose
 ```
 
 ## 📊 Resultados Experimentales
 
 ### Comparación de Rendimiento
 
-| Algoritmo | 20 ciudades | 50 ciudades | 100 ciudades | Tiempo |
-|-----------|-------------|-------------|--------------|--------|
-| **Greedy + 2-opt** | 386.63 | 658.42 | 1407.84 | <1s |
-| **Genetic Algorithm** | 386.63 | 642.31 | 1389.52 | 10-60s |
-| **Simulated Annealing** | 389.13 | 649.75 | 1425.67 | 1-5s |
-| **Hybrid** | **386.43** | **638.92** | **1378.43** | 5-30s |
+Fuente: `results/benchmarks/report_20251004_142803.txt` — instancias aleatorias de 10, 15, 20, 25 y 30 ciudades, 5 iteraciones cada una.
 
-### Caso Real: Valle Central de Costa Rica
-
-| Ruta | Ciudades | Distancia Original | Distancia Optimizada | Ahorro |
-|------|----------|-------------------|---------------------|--------|
-| Valle Central | 8 | 285.4 km | 212.7 km | 25.5% |
-| Capitales | 7 | 892.3 km | 658.1 km | 26.2% |
-| Ruta Pacífica | 5 | 456.2 km | 387.9 km | 15.0% |
-
+| Algoritmo | Costo promedio | Tiempo promedio |
+|-----------|----------------|-----------------|
+| **Hybrid** | **385.28** | 5.531 s |
+| Greedy | 393.27 | 0.062 s |
+| Genetic Algorithm | 400.26 | 4.754 s |
+| Simulated Annealing | 415.22 | 0.064 s |
 
 ## 🧪 Pruebas
 
-### Ejecutar todas las pruebas:
+### Ejecutar las pruebas:
 ```bash
 pytest tests/
 ```
 
-### Verificar cobertura:
-```bash
-pytest --cov=algorithms tests/
-```
-
-### Prueba rápida:
-```bash
-# Windows
-python main.py --cities 20 --algorithms all --visualize
-
-# Linux/Mac
-make run-small
-```
+Hay 15 pruebas unitarias, todas para `GreedyTSP`. Con `pytest --cov=algorithms tests/` la cobertura medida es 25 % (greedy.py 91 %; genetic, simulated_annealing e hybrid casi sin cubrir).
 
 ## 📈 Benchmarks
 
@@ -239,7 +187,7 @@ Para ejecutar benchmarks completos:
 
 ```bash
 # Con datos aleatorios
-python -m utils.benchmark --instances small,medium,large --iterations 10
+python -m utils.benchmark --instances small --iterations 10 --plot
 
 # Con datos de Costa Rica
 python costa_rica_demo.py
@@ -285,8 +233,7 @@ Las contribuciones son bienvenidas. Por favor:
 - ✅ **Implementación completa** de 4 algoritmos heurísticos
 - ✅ **Aplicación práctica** con datos reales de Costa Rica
 - ✅ **Documentación exhaustiva** en español
-- ✅ **Mejora del 25%** en rutas de distribución del Valle Central
-- ✅ **100% de cobertura** en pruebas unitarias
+- ✅ Benchmark reproducible con resultados guardados en `results/benchmarks/`
 
 ## 👤 Autor
 
@@ -298,7 +245,7 @@ Las contribuciones son bienvenidas. Por favor:
 
 ## 📄 Licencia
 
-Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
+Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE.md) para más detalles.
 
 ## 🙏 Agradecimientos
 
@@ -312,3 +259,11 @@ Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) par
 ⭐ Si este proyecto te fue útil, considera darle una estrella en GitHub!
 
 🇨🇷 **Hecho con ❤️ en Costa Rica**
+
+## Notas de corrección (nov. 2026)
+
+- El número de ciudades de Costa Rica es 26 (`COSTA_RICA_CITIES`); antes decía 27.
+- Se eliminó la tabla de 50/100 ciudades y la tabla de ahorro del Valle Central (25.5 %): venían del informe del curso y la ruta "original" usada como referencia no está en este repositorio, así que no se pueden reproducir. La tabla actual sale de los resultados guardados.
+- Se eliminó la afirmación de "100 % de cobertura"; la cobertura medida es 25 %.
+- `main.py` no tiene opciones de línea de comandos; se eliminaron los ejemplos con `--cities` y `make run-small` (el Makefile está guardado como `Makefile.txt`).
+- Problema conocido: el subconjunto `caribe` usa el índice 26, que no existe (hay 26 ciudades, índices 0–25), así que `test_costa_rica_tsp('caribe')` falla. No se usa en la demo.
