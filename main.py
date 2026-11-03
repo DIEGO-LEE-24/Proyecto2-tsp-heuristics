@@ -3,7 +3,6 @@
 """
 TSP Solver - Comparación de Algoritmos Heurísticos
 Autor: Lee Sang-cheol
-Carné: 2024801079
 Curso: Estructuras de Datos y Algoritmos
 """
 
